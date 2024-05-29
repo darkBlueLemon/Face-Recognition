@@ -23,6 +23,7 @@ def save_data(face_encodings, face_names):
     np.save(FACE_ENCODINGS_FILE, face_encodings)
     np.save(FACE_NAMES_FILE, face_names)
 
+
 @app.route('/')
 def index():
     return render_template('index.html')

@@ -4,12 +4,16 @@ import numpy as np
 
 video_capture = cv2.VideoCapture(0)
 
-# Load Encodings
-known_face_encodings = np.load("face_encodings.npy")
-known_face_names = np.load("face_names.npy")
+# Load Encodings if available, otherwise initialize empty arrays
+try:
+    known_face_encodings = np.load("face_encodings.npy")
+    known_face_names = np.load("face_names.npy")
+except FileNotFoundError:
+    known_face_encodings = np.array([])
+    known_face_names = np.array([])
 
-# Set the threshold value (tolerance) here
-threshold = 0.4
+# Threshold value (tolerance)
+threshold = 0.5
 
 face_locations = []
 face_encodings = []
@@ -22,27 +26,28 @@ while True:
     if process_this_frame:
         small_frame = cv2.resize(frame, (0, 0), fx=0.25, fy=0.25)
 
-        rgb_small_frame = small_frame
+        rgb_small_frame = cv2.cvtColor(small_frame, cv2.COLOR_BGR2RGB)
         
         face_locations = face_recognition.face_locations(rgb_small_frame)
         face_encodings = face_recognition.face_encodings(rgb_small_frame, face_locations)
 
         face_names = []
         for face_encoding in face_encodings:
-            matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=threshold)
-            name = "Unknown"
+            if len(known_face_encodings) == 0 or len(known_face_names) == 0:
+                name = "Unknown"
+            else:
+                matches = face_recognition.compare_faces(known_face_encodings, face_encoding, tolerance=threshold)
+                name = "Unknown"
 
-            if True in matches:
-                first_match_index = matches.index(True)
-                name = known_face_names[first_match_index]
+                if True in matches:
+                    first_match_index = matches.index(True)
+                    name = known_face_names[first_match_index]
 
             face_names.append(name)
 
     process_this_frame = not process_this_frame
 
-
     for (top, right, bottom, left), name in zip(face_locations, face_names):
-        # Scale back up face locations since the frame we detected in was scaled to 1/4 size
         top *= 4
         right *= 4
         bottom *= 4
