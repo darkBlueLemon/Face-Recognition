@@ -4,20 +4,9 @@ import numpy as np
 
 video_capture = cv2.VideoCapture(0)
 
-amith_img = face_recognition.load_image_file("Amith.jpg")
-amith_face_encoding = face_recognition.face_encodings(amith_img)[0]
-
-pranav_img = face_recognition.load_image_file("Pranav.jpg")
-pranav_face_encoding = face_recognition.face_encodings(pranav_img)[0]
-
-known_face_encodings = [
-    amith_face_encoding,
-    pranav_face_encoding
-]
-known_face_names = [
-    "Amith",
-    "Pranav"
-]
+# Load Encodings
+known_face_encodings = np.load("face_encodings.npy")
+known_face_names = np.load("face_names.npy")
 
 face_locations = []
 face_encodings = []
