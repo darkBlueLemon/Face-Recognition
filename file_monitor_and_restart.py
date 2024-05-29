@@ -12,7 +12,7 @@ class FileChangeHandler(FileSystemEventHandler):
         self.script = script
         self.process = None
         self.last_change_time = 0
-        self.debounce_time = 5
+        self.debounce_time = 10 # Ignoring time
 
     def start_process(self):
         self.process = subprocess.Popen(["python", self.script])
